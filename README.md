@@ -74,6 +74,26 @@ data/raw/creditcard.csv
 
 ---
 
+## Resuming Development
+
+Every time you return to this project:
+
+```bash
+# 1. Navigate to the project
+cd /Users/gabrielolson/projects/fraud-detection-model
+
+# 2. Activate the virtual environment — you'll see (.venv) in your prompt when active
+source .venv/bin/activate
+
+# 3. Launch Jupyter to work through notebooks
+jupyter lab
+```
+
+> The virtual environment only needs to be created once (`uv venv` + `uv pip install`).
+> After that, just activate it each session with `source .venv/bin/activate`.
+
+---
+
 ## Running the Project
 
 ```bash
