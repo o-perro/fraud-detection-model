@@ -1,0 +1,24 @@
+# Secrets
+.env
+
+# Data — raw data is large and should not be committed
+data/raw/
+data/processed/
+data/outputs/
+
+# Model artifacts — store in S3 or a model registry instead
+models/*.pkl
+models/*.joblib
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+*.egg-info/
+dist/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# OS
+.DS_Store
