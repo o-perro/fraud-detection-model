@@ -112,14 +112,14 @@ ruff format src/
 
 ## Results
 
-*To be updated after model training.*
+*Model: XGBoost v1.0 | Optimal threshold: 0.9843*
 
 | Metric | Score |
 |--------|-------|
-| Precision-Recall AUC | — |
-| F1 Score | — |
-| Recall (fraud) | — |
-| Precision (fraud) | — |
+| F1 Score | 0.8571 |
+| Recall (fraud) | 79.6% (78/98 fraud cases caught) |
+| False Positives | 6 legitimate transactions incorrectly flagged |
+| Optimal Threshold | 0.9843 |
 
 ---
 
