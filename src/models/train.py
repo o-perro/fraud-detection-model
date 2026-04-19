@@ -108,18 +108,20 @@ def tune_threshold(
 
 def save_model(
     model: XGBClassifier,
+    scaler: object,
     threshold: float,
     metrics: dict,
     path: str | Path,
 ) -> None:
-    """Serialize the trained model, threshold, and metrics to disk.
+    """Serialize the trained model, scaler, threshold, and metrics to disk.
 
-    Saves as a versioned pickle file. We bundle the threshold and metrics
-    alongside the model so predictions are reproducible and performance
-    is visible without re-running evaluation.
+    The scaler is bundled with the model because new transactions must be
+    scaled using the exact same mean/std from training — not refitted on
+    new data. Without saving the scaler, predictions on new data would be wrong.
 
     Args:
         model: Trained XGBClassifier
+        scaler: Fitted StandardScaler from build_features()
         threshold: Optimal decision threshold from tune_threshold()
         metrics: Performance metrics dict from tune_threshold()
         path: Save path e.g. models/xgb_v1.0.pkl
@@ -129,8 +131,9 @@ def save_model(
 
     payload = {
         "model": model,
+        "scaler": scaler,      # required for correct scaling of new transactions
         "threshold": threshold,
-        **metrics,  # unpack pr_auc, roc_auc, best_f1 into the dict
+        **metrics,
     }
 
     joblib.dump(payload, path)

@@ -15,7 +15,7 @@ def build_features(
     test_size: float = 0.2,
     smote_random_state: int = 42,
     split_random_state: int = 42,
-) -> tuple[pd.DataFrame, pd.DataFrame, pd.Series, pd.Series]:
+) -> tuple[pd.DataFrame, pd.DataFrame, pd.Series, pd.Series, StandardScaler]:
     """Run the full feature engineering pipeline on the raw dataset.
 
     Steps:
@@ -31,7 +31,8 @@ def build_features(
         split_random_state: Random seed for train/test split reproducibility
 
     Returns:
-        Tuple of (X_train_resampled, X_test, y_train_resampled, y_test)
+        Tuple of (X_train_resampled, X_test, y_train_resampled, y_test, scaler)
+        The scaler must be saved alongside the model for correct prediction on new data.
     """
     df = df.copy()  # never modify the original dataframe
 
@@ -74,4 +75,6 @@ def build_features(
         f"Fraud: {(y_train_resampled==1).sum():,}"
     )
 
-    return X_train_resampled, X_test, y_train_resampled, y_test
+    # Return scaler alongside data — it must be saved with the model so new
+    # transactions can be scaled using the exact same mean/std from training
+    return X_train_resampled, X_test, y_train_resampled, y_test, scaler

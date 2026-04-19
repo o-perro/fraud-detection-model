@@ -21,15 +21,15 @@ def processed_data():
 def test_train_model_returns_fitted_model(processed_data):
     """train_model() should return a fitted XGBClassifier."""
     from xgboost import XGBClassifier
-    X_train, _, y_train, _ = processed_data
+    X_train, _, y_train, _, _ = processed_data
     model = train_model(X_train, y_train)
     assert isinstance(model, XGBClassifier)
-    assert hasattr(model, "feature_importances_")  # only set after fitting
+    assert hasattr(model, "feature_importances_")
 
 
 def test_tune_threshold_returns_valid_threshold(processed_data):
     """Threshold should be a float between 0 and 1."""
-    X_train, X_test, y_train, y_test = processed_data
+    X_train, X_test, y_train, y_test, _ = processed_data
     model = train_model(X_train, y_train)
     threshold, metrics = tune_threshold(model, X_test, y_test)
 
@@ -41,27 +41,28 @@ def test_tune_threshold_returns_valid_threshold(processed_data):
 
 def test_save_model_creates_file(processed_data, tmp_path):
     """save_model() should write a .pkl file to the specified path."""
-    X_train, X_test, y_train, y_test = processed_data
+    X_train, X_test, y_train, y_test, scaler = processed_data
     model = train_model(X_train, y_train)
     threshold, metrics = tune_threshold(model, X_test, y_test)
 
     save_path = tmp_path / "test_model.pkl"
-    save_model(model, threshold, metrics, save_path)
+    save_model(model, scaler, threshold, metrics, save_path)
 
     assert save_path.exists()
 
 
 def test_save_model_payload_contains_expected_keys(processed_data, tmp_path):
-    """Loaded model payload should contain model, threshold, and metrics."""
-    X_train, X_test, y_train, y_test = processed_data
+    """Loaded model payload should contain model, scaler, threshold, and metrics."""
+    X_train, X_test, y_train, y_test, scaler = processed_data
     model = train_model(X_train, y_train)
     threshold, metrics = tune_threshold(model, X_test, y_test)
 
     save_path = tmp_path / "test_model.pkl"
-    save_model(model, threshold, metrics, save_path)
+    save_model(model, scaler, threshold, metrics, save_path)
 
     payload = joblib.load(save_path)
     assert "model" in payload
+    assert "scaler" in payload      # critical — needed for correct prediction on new data
     assert "threshold" in payload
     assert "pr_auc" in payload
     assert "best_f1" in payload
